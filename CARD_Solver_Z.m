@@ -1,4 +1,4 @@
-function [y_pred, Z] = CARD_Solver_noC(Bs, missInd, nCluster, param)
+function [y_pred, Z] = CARD_Solver_Z(Bs, missInd, nCluster, param)
 %IMVC_CAH_SOLVER_NOC IMVC-CAH solver without explicitly forming C (N x N).
 %   Alternates:
 %     C-step: Closed-form update of P (anchor space)
@@ -159,4 +159,4 @@ function [y_pred, Z] = CARD_Solver_noC(Bs, missInd, nCluster, param)
         end
     end
     
-    Z_out = Z; % Return the final features if needed
+    Z = CARD_updateZ(Q, V, y_pred, Sigma_inv, E, alpha, nCluster);

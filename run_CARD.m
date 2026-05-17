@@ -51,7 +51,7 @@ m_ratio_range = [5, 10,20,50,100,200]; % m = nCluster * ratio
 k_range = [5,10,15];
 
 % Fixed Parameters
-param.maxIter = 5;
+param.maxIter = 10;
 param.maxIterC = 10;
 
 for iDataIdx = 1:length(dataname)
@@ -133,7 +133,7 @@ for iDataIdx = 1:length(dataname)
             local_param = param;
             local_param.lambda = cur_lambda;
 
-            rng(1, 'twister');
+            rng(10, 'twister');
 
             % --- 2. Anchor Generation + Solver (Total Time) ---
             t_total_start = tic;
@@ -145,7 +145,7 @@ for iDataIdx = 1:length(dataname)
                 if n_samples < m
                     Xa = Xs_filtered{iView};
                 else
-                    [~, Xa] = litekmeans(Xs_filtered{iView}, m, 'Replicates', 1);
+                    [~, Xa] = litekmeans(Xs_filtered{iView}, m, 'Replicates', 10);
                 end
                 Bs{iView} = ConstructBP_pkn(Xs_filtered{iView}, Xa, 'nNeighbor', cur_k_neighbor);
             end
