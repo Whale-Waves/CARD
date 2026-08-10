@@ -73,26 +73,18 @@ function [y_pred, Z] = CARD_Solver_Z(Bs, missInd, nCluster, param)
     Q = H_hat * B_inv_sqrt; % N x M (Sparse)
     
     % --- Phase I: One-shot Initialization ---
-    % 1. Compute SVD of Q'Q = V * Sigma^2 * V'
+    % 1. Compute the same leading-r spectrum directly from Q
     fprintf('Phase I: Computing spectral geometry of anchors...\n');
-    G = full(Q' * Q);
-    G = (G + G') / 2;
-    [V, D_sq] = eig(G, 'vector'); % D_sq contains sigma_i^2
-    
-    % Sort eigenvalues descending
-    [sigma_sq, idx] = sort(D_sq, 'descend');
-    V = V(:, idx);
-    
-    % Truncate to r = k (as per algorithm, use subscript r)
     r = nCluster;
-    sigma_sq = sigma_sq(1:r);
-    V = V(:, 1:r);
+    [~, Sigma, V] = svds(Q, r, 'largest');
+    [singular_values, idx] = sort(diag(Sigma), 'descend');
+    V = V(:, idx);
+    sigma_sq = singular_values .^ 2;
     M_eff = r;
     
     fprintf('Truncating to r=%d dimensions (as per algorithm)\n', r);
     
-    Sigma = sqrt(sigma_sq);     % sigma_i
-    Sigma_inv = 1 ./ Sigma;     % 1/sigma_i
+    Sigma_inv = 1 ./ singular_values; % 1/sigma_i
     
     % 2. Compute Spectral Filter Omega and Factor E
     
